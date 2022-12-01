@@ -28,6 +28,7 @@ func main() {
 	// Use the GET function to associate the GET HTTP method and /albums path with a handler function.
 	// Note that you’re passing the name of the getAlbums function. This is different from passing the result of the function, which you would do by passing getAlbums() (note the parenthesis).
 	router.GET("/albums", getAlbums)
+	router.POST("/albums", postAlbums)
 
 	// Use the Run function to attach the router to an http.Server and start the server.
 	router.Run("localhost:8080")
@@ -41,4 +42,19 @@ func getAlbums(c *gin.Context) {
 
 	// Note that you can replace Context.IndentedJSON with a call to Context.JSON to send more compact JSON. In practice, the indented form is much easier to work with when debugging and the size difference is usually small.
 	c.IndentedJSON(http.StatusOK, albums)
+}
+
+// postAlbums adds an album from JSON received in the request body.
+func postAlbums(c *gin.Context) {
+    var newAlbum album
+
+    // Call BindJSON to bind the received JSON to
+    // newAlbum.
+    if err := c.BindJSON(&newAlbum); err != nil {
+        return
+    }
+
+    // Add the new album to the slice.
+    albums = append(albums, newAlbum)
+    c.IndentedJSON(http.StatusCreated, newAlbum)
 }
