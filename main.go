@@ -30,7 +30,7 @@ func main() {
 	router.GET("/albums", getAlbums)
 	router.POST("/albums", postAlbums)
 	router.GET("/albums/:id", getAlbumByID)
-	// router.DELETE("/albums/:id", deleteAlbumByID)
+	router.DELETE("/albums/:id", deleteAlbumByID)
 
 	// Use the Run function to attach the router to an http.Server and start the server.
 	router.Run("localhost:8080")
@@ -73,5 +73,20 @@ func getAlbumByID(c *gin.Context) {
 			return
 		}
 	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "item not found"})
+}
+
+func deleteAlbumByID(c *gin.Context) {
+	id := c.Param("id")
+
+	for i, a := range albums {
+		if a.ID == id {
+			albums[i] = albums[len(albums)-1]
+			albums = albums[:len(albums)-1]
+			c.IndentedJSON(http.StatusOK, gin.H{"message": "album deleted successfuly"})
+			return
+		}
+	}
+
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "item not found"})
 }
